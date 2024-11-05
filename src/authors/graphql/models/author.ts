@@ -1,5 +1,6 @@
-import { Field, ID } from '@nestjs/graphql'
+import { Field, ID, ObjectType } from '@nestjs/graphql'
 
+@ObjectType()
 export class Author {
   @Field(() => ID)
   id: string
@@ -10,6 +11,6 @@ export class Author {
   @Field(() => String)
   email: string
 
-  @Field(() => String)
-  createdAt: string
+  @Field()
+  createdAt: Date
 }
