@@ -18,7 +18,8 @@
     "test:cov": "npx dotenv-cli -e .env.test -- jest --runInBand --coverage",
     "test:debug": "npx dotenv-cli -e .env.test -- node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "npx dotenv-cli -e .env.test -- jest --runInBand --config ./jest.e2e.config.ts",
-    "test:int": "npx dotenv-cli -e .env.test -- jest --runInBand --config ./jest.int.config.ts"
+    "test:int": "npx dotenv-cli -e .env.test -- jest --runInBand --config ./jest.int.config.ts",
+    "prisma:migrate-test": "npx dotenv-cli -e .env.test -- npx prisma migrate deploy"
   },
   "dependencies": {
     "@apollo/server": "^4.11.2",
@@ -35,9 +36,10 @@
     "rxjs": "^7.8.1"
   },
   "devDependencies": {
+    "@faker-js/faker": "^9.2.0",
     "@nestjs/cli": "^10.0.0",
     "@nestjs/schematics": "^10.0.0",
-    "@nestjs/testing": "^10.0.0",
+    "@nestjs/testing": "^10.4.6",
     "@types/express": "^4.17.17",
     "@types/jest": "^29.5.2",
     "@types/node": "^20.3.1",
