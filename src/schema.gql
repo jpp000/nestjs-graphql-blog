@@ -22,10 +22,21 @@ type SearchAuthorsResult {
   total: Int!
 }
 
+type Post {
+  id: ID!
+  title: String!
+  slug: String!
+  content: String!
+  published: Boolean!
+  authorId: String!
+  createdAt: DateTime!
+}
+
 type Query {
   hello: String!
   authors(page: Int, perPage: Int, sort: String, sortDir: String, filter: String): SearchAuthorsResult!
   getAuthorById(id: String!): Author!
+  getPostById(id: String!): Post!
 }
 
 type Mutation {

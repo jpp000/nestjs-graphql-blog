@@ -1,7 +1,7 @@
 import { PostOutput } from '../dto/post-output'
 import { IPostsRepository } from '../interfaces/posts.repository'
 
-export namespace CreatePostUseCase {
+export namespace UnpublishPostUseCase {
   export type Input = {
     id: string
   }

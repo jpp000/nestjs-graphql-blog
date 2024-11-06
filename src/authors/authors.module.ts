@@ -51,5 +51,6 @@ import { UpdateAuthorUseCase } from './usecases/update-author.usecase'
       inject: ['AuthorsRepository'],
     },
   ],
+  exports: ['AuthorsRepository'],
 })
 export class AuthorsModule {}
