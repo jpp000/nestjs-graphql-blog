@@ -3,6 +3,7 @@ import { DatabaseModule } from '@faker-js/faker/.'
 import { Module } from '@nestjs/common'
 import { PostsPrimsaRepository } from './repositories/posts-prisma.repository'
 import { PrismaService } from '@/database/prisma/prisma.service'
+import { ResolversResolver } from './graphql/resolvers/resolvers.resolver'
 
 @Module({
   imports: [DatabaseModule, AuthorsModule],
@@ -13,6 +14,7 @@ import { PrismaService } from '@/database/prisma/prisma.service'
         new PostsPrimsaRepository(prismaService),
       inject: [PrismaService],
     },
+    ResolversResolver,
   ],
 })
 export class PostsModule {}

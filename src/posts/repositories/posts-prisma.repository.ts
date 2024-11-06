@@ -6,8 +6,10 @@ import { NotFoundError } from '@/shared/errors/not-found-error'
 export class PostsPrimsaRepository implements IPostsRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async create(data: Omit<Post, 'id'>): Promise<Post> {
-    return this.prismaService.post.create({ data })
+  async create(data: Omit<Post, 'id' | 'createdAt'>): Promise<Post> {
+    return this.prismaService.post.create({
+      data,
+    })
   }
 
   async update(post: Post): Promise<Post> {
