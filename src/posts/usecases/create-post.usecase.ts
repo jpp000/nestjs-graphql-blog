@@ -37,11 +37,12 @@ export namespace CreatePostUseCase {
         throw new ConflictError(`Title ${title} already used`)
       }
 
-      return this.postsRepository.create({
+      const post = await this.postsRepository.create({
         ...input,
         slug,
-        published: false,
       })
+
+      return post as PostOutput
     }
   }
 }

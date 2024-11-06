@@ -12,7 +12,8 @@ export namespace GetPostUseCase {
     constructor(private readonly postsRepository: IPostsRepository) {}
 
     async execute(input: Input): Promise<Output> {
-      return this.postsRepository.findById(input.id)
+      const post = await this.postsRepository.findById(input.id)
+      return post as PostOutput
     }
   }
 }

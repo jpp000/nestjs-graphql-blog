@@ -2,7 +2,7 @@ import { AuthorsModule } from '@/authors/authors.module'
 import { Module } from '@nestjs/common'
 import { PostsPrimsaRepository } from './repositories/posts-prisma.repository'
 import { PrismaService } from '@/database/prisma/prisma.service'
-import { ResolversResolver } from './graphql/resolvers/resolvers.resolver'
+import { PostsResolver } from './graphql/resolvers/posts.resolver'
 import { DatabaseModule } from '@/database/database.module'
 import { IPostsRepository } from './interfaces/posts.repository'
 import { GetPostUseCase } from './usecases/get-post.usecase'
@@ -14,7 +14,7 @@ import { IAuthorsRepository } from '@/authors/interfaces/authors.repository'
 @Module({
   imports: [DatabaseModule, AuthorsModule],
   providers: [
-    ResolversResolver,
+    PostsResolver,
     {
       provide: 'PostsRepository',
       useFactory: (prismaService: PrismaService) =>
@@ -22,25 +22,25 @@ import { IAuthorsRepository } from '@/authors/interfaces/authors.repository'
       inject: [PrismaService],
     },
     {
-      provide: 'GetPostUseCase',
+      provide: GetPostUseCase.UseCase,
       useFactory: (postsRepository: IPostsRepository) =>
         new GetPostUseCase.UseCase(postsRepository),
       inject: ['PostsRepository'],
     },
     {
-      provide: 'PublishPostUseCase',
+      provide: PublishPostUseCase.UseCase,
       useFactory: (postsRepository: IPostsRepository) =>
         new PublishPostUseCase.UseCase(postsRepository),
       inject: ['PostsRepository'],
     },
     {
-      provide: 'UnpublishPostUseCase',
+      provide: UnpublishPostUseCase.UseCase,
       useFactory: (postsRepository: IPostsRepository) =>
         new UnpublishPostUseCase.UseCase(postsRepository),
       inject: ['PostsRepository'],
     },
     {
-      provide: 'CreatePostUseCase',
+      provide: CreatePostUseCase.UseCase,
       useFactory: (
         postsRepository: IPostsRepository,
         authorsRepository: IAuthorsRepository,

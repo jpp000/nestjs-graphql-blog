@@ -28,7 +28,7 @@ type Post {
   slug: String!
   content: String!
   published: Boolean!
-  authorId: String!
+  author: Author!
   createdAt: DateTime!
 }
 
@@ -43,6 +43,9 @@ type Mutation {
   createAuthor(data: CreateAuthorInput!): Author!
   updateAuthor(id: String!, data: UpdateAuthorInput!): Author!
   deleteAuthor(id: String!): Author!
+  createPost(data: CreatePostInput!): Post!
+  publishPost(input: PublishPostInput!): Post!
+  unpublishPost(input: PublishPostInput!): Post!
 }
 
 input CreateAuthorInput {
@@ -53,4 +56,14 @@ input CreateAuthorInput {
 input UpdateAuthorInput {
   name: String
   email: String
+}
+
+input CreatePostInput {
+  title: String!
+  content: String!
+  authorId: String!
+}
+
+input PublishPostInput {
+  id: String!
 }

@@ -16,10 +16,12 @@ export class Post {
   content: string
 
   @Field(() => Boolean)
-  published: boolean
+  published?: boolean
 
-  @Field()
   authorId: string
+
+  @Field(() => Author)
+  author?: Author
 
   @Field()
   createdAt: Date

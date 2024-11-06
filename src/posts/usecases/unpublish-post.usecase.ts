@@ -16,7 +16,9 @@ export namespace UnpublishPostUseCase {
 
       post.published = false
 
-      return this.postsRepository.update(post)
+      const updatedPost = await this.postsRepository.update(post)
+
+      return updatedPost as PostOutput
     }
   }
 }
