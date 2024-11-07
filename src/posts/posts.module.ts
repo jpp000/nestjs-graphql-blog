@@ -10,6 +10,7 @@ import { PublishPostUseCase } from './usecases/publish-post.usecase'
 import { UnpublishPostUseCase } from './usecases/unpublish-post.usecase'
 import { CreatePostUseCase } from './usecases/create-post.usecase'
 import { IAuthorsRepository } from '@/authors/interfaces/authors.repository'
+import { GetAuthorPostsUseCase } from './usecases/get-author-posts.usecase'
 
 @Module({
   imports: [DatabaseModule, AuthorsModule],
@@ -47,6 +48,13 @@ import { IAuthorsRepository } from '@/authors/interfaces/authors.repository'
       ) => new CreatePostUseCase.UseCase(postsRepository, authorsRepository),
       inject: ['PostsRepository', 'AuthorsRepository'],
     },
+    {
+      provide: GetAuthorPostsUseCase.UseCase,
+      useFactory: (postsRepository: IPostsRepository) =>
+        new GetAuthorPostsUseCase.UseCase(postsRepository),
+      inject: ['PostsRepository'],
+    },
   ],
+  exports: [GetAuthorPostsUseCase.UseCase],
 })
 export class PostsModule {}
