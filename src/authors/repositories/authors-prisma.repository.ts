@@ -14,22 +14,29 @@ export class AuthorsPrismaRepository implements IAuthorsRepository {
   sortableFields: string[] = ['name', 'email', 'createdAt']
 
   async create(data: ICreateAuthor): Promise<Author> {
-    return this.prismaService.author.create({ data })
+    return this.prismaService.author.create({ data, include: { posts: true } })
   }
 
   async update(author: Author): Promise<Author> {
-    await this.get(author.id)
-    return this.prismaService.author.update({
-      where: {
-        id: author.id,
-      },
-      data: author,
+    const { id, name, email } = author
+
+    await this.get(id)
+
+    const updatedAuthor = await this.prismaService.author.update({
+      where: { id },
+      data: { name, email },
+      include: { posts: true },
     })
+
+    return updatedAuthor
   }
 
   async delete(id: string): Promise<Author> {
     await this.get(id)
-    return this.prismaService.author.delete({ where: { id } })
+    return this.prismaService.author.delete({
+      where: { id },
+      include: { posts: true },
+    })
   }
 
   async findById(id: string): Promise<Author> {
@@ -37,7 +44,10 @@ export class AuthorsPrismaRepository implements IAuthorsRepository {
   }
 
   async findByEmail(email: string): Promise<Author> {
-    return this.prismaService.author.findUnique({ where: { email } })
+    return this.prismaService.author.findUnique({
+      where: { email },
+      include: { posts: true },
+    })
   }
 
   async search(params: SearchParams): Promise<SearchResult> {
@@ -72,6 +82,7 @@ export class AuthorsPrismaRepository implements IAuthorsRepository {
       },
       skip: page > 0 ? (page - 1) * perPage : 1,
       take: perPage > 0 ? perPage : 15,
+      include: { posts: true },
     })
 
     return {
@@ -84,7 +95,10 @@ export class AuthorsPrismaRepository implements IAuthorsRepository {
   }
 
   async get(id: string): Promise<Author> {
-    const author = await this.prismaService.author.findUnique({ where: { id } })
+    const author = await this.prismaService.author.findUnique({
+      where: { id },
+      include: { posts: true },
+    })
 
     if (!author) {
       throw new NotFoundError(`Autor not found using ID: ${id}`)

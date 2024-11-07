@@ -40,7 +40,12 @@ describe('PostsPrismaRepository int tests', () => {
     const authorData = AuthorDataBuilder({})
 
     const author = await prismaService.author.create({
-      data: authorData,
+      data: {
+        ...authorData,
+        posts: {
+          create: [],
+        },
+      },
     })
 
     const post = await prismaService.post.create({
@@ -64,7 +69,12 @@ describe('PostsPrismaRepository int tests', () => {
     const authorData = AuthorDataBuilder({})
 
     const author = await prismaService.author.create({
-      data: authorData,
+      data: {
+        ...authorData,
+        posts: {
+          create: [],
+        },
+      },
     })
 
     const post = await sut.create({ ...postData, authorId: author.id })
@@ -91,7 +101,12 @@ describe('PostsPrismaRepository int tests', () => {
     const authorData = AuthorDataBuilder({})
 
     const author = await prismaService.author.create({
-      data: authorData,
+      data: {
+        ...authorData,
+        posts: {
+          create: [],
+        },
+      },
     })
 
     const post = await prismaService.post.create({
@@ -125,7 +140,12 @@ describe('PostsPrismaRepository int tests', () => {
     const authorData = AuthorDataBuilder({})
 
     const author = await prismaService.author.create({
-      data: authorData,
+      data: {
+        ...authorData,
+        posts: {
+          create: [],
+        },
+      },
     })
 
     const post = await prismaService.post.create({

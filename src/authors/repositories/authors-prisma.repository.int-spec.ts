@@ -4,7 +4,6 @@ import { PrismaClient } from '@prisma/client'
 import { execSync } from 'node:child_process'
 import { NotFoundError } from '@/shared/errors/not-found-error'
 import { AuthorDataBuilder } from '../helpers/author-data-builder'
-import { emit, emitWarning } from 'node:process'
 
 describe('AuthorsPrismaRepository int tests', () => {
   let module: TestingModule
@@ -16,19 +15,20 @@ describe('AuthorsPrismaRepository int tests', () => {
     await prismaService.$connect()
 
     module = await Test.createTestingModule({}).compile()
-
     sut = new AuthorsPrismaRepository(prismaService as any)
   })
 
   beforeEach(async () => {
+    await prismaService.post.deleteMany()
     await prismaService.author.deleteMany()
   })
 
   afterAll(async () => {
+    await prismaService.$disconnect()
     await module.close()
   })
 
-  it('should throws an error when the id is not found', async () => {
+  it('should throw an error when the id is not found', async () => {
     await expect(sut.findById('fakeId')).rejects.toThrow(
       new NotFoundError(`Autor not found using ID: fakeId`),
     )
@@ -38,15 +38,20 @@ describe('AuthorsPrismaRepository int tests', () => {
     const data = AuthorDataBuilder({})
 
     const author = await prismaService.author.create({
-      data,
+      data: {
+        ...data,
+        posts: {
+          create: [],
+        },
+      },
     })
 
     const result = await sut.findById(author.id)
 
-    expect(result).toStrictEqual(author)
+    expect(result).toMatchObject(author)
   })
 
-  it('should create a author', async () => {
+  it('should create an author', async () => {
     const data = AuthorDataBuilder({})
 
     const author = await sut.create(data)
@@ -54,7 +59,7 @@ describe('AuthorsPrismaRepository int tests', () => {
     expect(author).toMatchObject(data)
   })
 
-  it('should throws an error when updating a author not found', async () => {
+  it('should throw an error when updating a non-existing author', async () => {
     const data = AuthorDataBuilder({})
 
     const author = {
@@ -69,32 +74,47 @@ describe('AuthorsPrismaRepository int tests', () => {
     )
   })
 
-  it('should update a author', async () => {
+  it('should update an author', async () => {
     const data = AuthorDataBuilder({})
 
-    const author = await prismaService.author.create({ data })
+    const author = await prismaService.author.create({
+      data: {
+        ...data,
+        posts: {
+          create: [],
+        },
+      },
+    })
 
     const result = await sut.update({ ...author, name: 'new name' })
 
     expect(result.name).toBe('new name')
   })
 
-  it('should throws an error when deleting a author not found', async () => {
+  it('should throw an error when deleting a non-existing author', async () => {
     await expect(sut.delete('fakeId')).rejects.toThrow(
       new NotFoundError(`Autor not found using ID: fakeId`),
     )
   })
 
-  it('should delete a author', async () => {
+  it('should delete an author', async () => {
     const data = AuthorDataBuilder({})
-    const author = await prismaService.author.create({ data })
+
+    const author = await prismaService.author.create({
+      data: {
+        ...data,
+        posts: {
+          create: [],
+        },
+      },
+    })
 
     const result = await sut.delete(author.id)
 
     expect(result).toMatchObject(author)
   })
 
-  it('should return null when does not found a author by email provided', async () => {
+  it('should return null when an author is not found by the provided email', async () => {
     const result = await sut.findByEmail('a@a.com')
     expect(result).toBeNull()
   })
@@ -103,18 +123,28 @@ describe('AuthorsPrismaRepository int tests', () => {
     const data = AuthorDataBuilder({ email: 'a@a.com' })
 
     const author = await prismaService.author.create({
-      data,
+      data: {
+        ...data,
+        posts: {
+          create: [],
+        },
+      },
     })
 
     const result = await sut.findByEmail('a@a.com')
 
-    expect(result).toStrictEqual(author)
+    expect(result).toMatchObject(author)
   })
 
   describe('search method', () => {
-    test('should only apply pagination when the parameters are null', async () => {
-      const createdAt = new Date()
-      const data = []
+    const createdAt = new Date()
+    let data = []
+
+    beforeEach(() => {
+      data = []
+    })
+
+    test('should only apply pagination when no other parameters are provided', async () => {
       const arrange = Array(16).fill(AuthorDataBuilder({}))
       arrange.forEach((element, index) => {
         const timestamp = createdAt.getTime() + index
@@ -133,15 +163,9 @@ describe('AuthorsPrismaRepository int tests', () => {
       result.items.forEach((item) => {
         expect(item.id).toBeDefined()
       })
-
-      result.items.reverse().forEach((item, index) => {
-        expect(`${item.email}${index + 1}@a.com`)
-      })
     })
 
     test('should apply pagination and ordering', async () => {
-      const createdAt = new Date()
-      const data = []
       const arrange = 'badec'
       arrange.split('').forEach((element, index) => {
         const timestamp = createdAt.getTime() + index
@@ -174,9 +198,7 @@ describe('AuthorsPrismaRepository int tests', () => {
       expect(result2.items[1]).toMatchObject(data[2])
     })
 
-    test('should apply pagination, filter and ordering', async () => {
-      const createdAt = new Date()
-      const data = []
+    test('should apply pagination, filter, and ordering', async () => {
       const arrange = ['test', 'a', 'TEST', 'b', 'Test']
       arrange.forEach((element, index) => {
         const timestamp = createdAt.getTime() + index

@@ -26,14 +26,3 @@ export class Post {
   @Field()
   createdAt: Date
 }
-
-// model Post {
-//   id        String   @unique @default(uuid())
-//   title     String
-//   slug      String   @unique
-//   content   String
-//   published Boolean  @default(false)
-//   author    Author   @relation(fields: [authorId], references: [id])
-//   authorId  String
-//   createdAt DateTime @default(now())
-// }
