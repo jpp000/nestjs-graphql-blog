@@ -33,6 +33,11 @@ export class AuthorsPrismaRepository implements IAuthorsRepository {
 
   async delete(id: string): Promise<Author> {
     await this.get(id)
+
+    await this.prismaService.post.deleteMany({
+      where: { authorId: id },
+    })
+
     return this.prismaService.author.delete({
       where: { id },
       include: { posts: true },
