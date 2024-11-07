@@ -19,6 +19,7 @@ import { CreateAuthorInput } from '../inputs/create-author.input'
 import { AuthorIdArgs } from '../args/author-id.args'
 import { UpdateAuthorInput } from '../inputs/update-author.input'
 import { Post } from '@/posts/graphql/models/post'
+import { GetAuthorPostsUseCase } from '@/posts/usecases/get-author-posts.usecase'
 
 @Resolver(() => Author)
 export class AuthorsResolver {
@@ -36,6 +37,9 @@ export class AuthorsResolver {
 
   @Inject(DeleteAuthorUseCase.UseCase)
   private readonly deleteAuthorUseCase: DeleteAuthorUseCase.UseCase
+
+  @Inject(GetAuthorPostsUseCase.UseCase)
+  private readonly getAuthorPostsUseCase: GetAuthorPostsUseCase.UseCase
 
   @Query(() => SearchAuthorsResult)
   authors(@Args() searchParamsArgs: SearchParamsArgs) {
@@ -65,8 +69,8 @@ export class AuthorsResolver {
     return this.deleteAuthorUseCase.execute(input)
   }
 
-  @ResolveField(() => [Post], { nullable: true })
+  @ResolveField(() => [Post])
   posts(@Parent() author: Author) {
-    return author.posts
+    return this.getAuthorPostsUseCase.execute({ authorId: author.id }) ?? []
   }
 }

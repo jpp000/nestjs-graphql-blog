@@ -37,10 +37,6 @@ export class PostsPrimsaRepository implements IPostsRepository {
       where: { authorId },
     })
 
-    if (posts.length === 0) {
-      throw new NotFoundError(`Posts not found using authorId: ${authorId}`)
-    }
-
     return posts
   }
 

@@ -9,6 +9,9 @@ import { GetAuthorUseCase } from './usecases/get-author.usecase'
 import { CreateAuthorUseCase } from './usecases/create-author.usecase'
 import { DeleteAuthorUseCase } from './usecases/delete-author.usecase'
 import { UpdateAuthorUseCase } from './usecases/update-author.usecase'
+import { GetAuthorPostsUseCase } from '@/posts/usecases/get-author-posts.usecase'
+import { IPostsRepository } from '@/posts/interfaces/posts.repository'
+import { PostsPrimsaRepository } from '@/posts/repositories/posts-prisma.repository'
 
 @Module({
   imports: [DatabaseModule],
@@ -18,6 +21,12 @@ import { UpdateAuthorUseCase } from './usecases/update-author.usecase'
       provide: 'AuthorsRepository',
       useFactory: (prismaService: PrismaService) =>
         new AuthorsPrismaRepository(prismaService),
+      inject: [PrismaService],
+    },
+    {
+      provide: 'PostsRepository',
+      useFactory: (prismaService: PrismaService) =>
+        new PostsPrimsaRepository(prismaService),
       inject: [PrismaService],
     },
     {
@@ -49,6 +58,12 @@ import { UpdateAuthorUseCase } from './usecases/update-author.usecase'
       useFactory: (authorsRepository: IAuthorsRepository) =>
         new UpdateAuthorUseCase.UseCase(authorsRepository),
       inject: ['AuthorsRepository'],
+    },
+    {
+      provide: GetAuthorPostsUseCase.UseCase,
+      useFactory: (postsRepository: IPostsRepository) =>
+        new GetAuthorPostsUseCase.UseCase(postsRepository),
+      inject: ['PostsRepository'],
     },
   ],
   exports: ['AuthorsRepository', GetAuthorUseCase.UseCase],
