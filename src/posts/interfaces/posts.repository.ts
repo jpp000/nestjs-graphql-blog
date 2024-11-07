@@ -5,5 +5,6 @@ export interface IPostsRepository {
   update(post: Post): Promise<Post>
   findById(id: string): Promise<Post>
   findBySlug(slug: string): Promise<Post>
+  findByAuthorId(authorId: string): Promise<Post[]>
   get(id: string): Promise<Post>
 }

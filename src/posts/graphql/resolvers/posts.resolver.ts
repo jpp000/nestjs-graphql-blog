@@ -16,6 +16,7 @@ import { PublishPostInput } from '../inputs/publish-post.input'
 import { PublishPostUseCase } from '@/posts/usecases/publish-post.usecase'
 import { UnpublishPostUseCase } from '@/posts/usecases/unpublish-post.usecase'
 import { GetAuthorUseCase } from '@/authors/usecases/get-author.usecase'
+import { Author } from '@/authors/graphql/models/author'
 
 @Resolver(() => Post)
 export class PostsResolver {
@@ -39,11 +40,6 @@ export class PostsResolver {
     return this.createPostUseCase.execute(data)
   }
 
-  @ResolveField()
-  author(@Parent() post: Post) {
-    return this.getAuthorUseCase.execute({ id: post.authorId })
-  }
-
   @Query(() => Post)
   getPostById(@Args() input: PostIdArgs) {
     return this.getPostUseCase.execute(input)
@@ -57,5 +53,10 @@ export class PostsResolver {
   @Mutation(() => Post)
   unpublishPost(@Args('input') input: PublishPostInput) {
     return this.unpublishPostUseCase.execute(input)
+  }
+
+  @ResolveField(() => Author)
+  author(@Parent() post: Post) {
+    return this.getAuthorUseCase.execute({ id: post.authorId })
   }
 }

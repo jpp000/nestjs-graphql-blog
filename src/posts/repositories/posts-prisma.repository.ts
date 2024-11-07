@@ -32,6 +32,18 @@ export class PostsPrimsaRepository implements IPostsRepository {
     })
   }
 
+  async findByAuthorId(authorId: string): Promise<Post[]> {
+    const posts = await this.prismaService.post.findMany({
+      where: { authorId },
+    })
+
+    if (posts.length === 0) {
+      throw new NotFoundError(`Posts not found using authorId: ${authorId}`)
+    }
+
+    return posts
+  }
+
   async get(id: string): Promise<Post> {
     const post = await this.prismaService.post.findUnique({
       where: { id },

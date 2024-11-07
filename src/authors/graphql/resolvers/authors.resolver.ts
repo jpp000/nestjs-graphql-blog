@@ -1,4 +1,11 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
+import {
+  Args,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql'
 import { Author } from '../models/author'
 import { Inject } from '@nestjs/common'
 import { ListAuthorsUseCase } from '@/authors/usecases/list-authors.usecase'
@@ -11,6 +18,7 @@ import { UpdateAuthorUseCase } from '@/authors/usecases/update-author.usecase'
 import { CreateAuthorInput } from '../inputs/create-author.input'
 import { AuthorIdArgs } from '../args/author-id.args'
 import { UpdateAuthorInput } from '../inputs/update-author.input'
+import { Post } from '@/posts/graphql/models/post'
 
 @Resolver(() => Author)
 export class AuthorsResolver {
@@ -55,5 +63,10 @@ export class AuthorsResolver {
   @Mutation(() => Author)
   deleteAuthor(@Args() input: AuthorIdArgs) {
     return this.deleteAuthorUseCase.execute(input)
+  }
+
+  @ResolveField(() => [Post], { nullable: true })
+  posts(@Parent() author: Author) {
+    return author.posts
   }
 }
